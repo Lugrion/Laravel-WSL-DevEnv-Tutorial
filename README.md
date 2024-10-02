@@ -1,18 +1,22 @@
 # Laravel-WSL-DevEnv-Tutorial
+
 - [Installing WSL in Windows 11](#installing-wsl-in-windows-11)
-- [Installing necessary Ubuntu packages](#installing-necessary-ubuntu-packages)
-- [Composer and Laravel settings](#composer-and-laravel-settings)
-- [Create your dev directory and App DB](#create-your-dev-directory-and-app-db)
-  - [Changing your root password (Optional)](#changing-your-root-password-optional)
-  - [Creating the DB](#creating-the-db)
-  - [Updating Laravel App Config](#updating-laravel-app-config)
-  - [Check the DB migrations](#check-the-db-migrations)
-- [Begin development](#begin-development)
+- [Installing Ubuntu Packages](#installing-ubuntu-packages)
+- [Setting up Composer and Laravel](#setting-up-composer-and-laravel)
+- [Creating your Development Directory and Database](#creating-your-development-directory-and-database)
+  - [Laravel Installer](#laravel-installer)
+  - [Changing the MySQL Root Password (Optional)](#changing-the-mysql-root-password-optional)
+  - [Creating the Database](#creating-the-database)
+  - [Updating Laravel App Configuration](#updating-laravel-app-configuration)
+  - [Check Migrations](#check-migrations)
+- [Starting the Development Server](#starting-the-development-server)
 - [Troubleshooting](#troubleshooting)
+
 
 # Installing WSL in Windows 11
 
-Open a Windows Terminal
+1) Open Windows Terminal with admin privileges.
+2) Run the following commands to install and configure WSL:
 
 ```
 wsl --install
@@ -26,85 +30,95 @@ wsl --set-default-version 2
 wsl --install -d Ubuntu-24.04
 ```
 
-Create your user and password
+3. Follow the on-screen instructions to set up your Ubuntu user and password.
 
 
-# Installing necessary Ubuntu packages
+# Installing Ubuntu Packages
 
-I recommend installing the WSL extension in VSCode to quickly connect to your instance's files.
+1) Install the WSL extension for VSCode for easier file navigation and access to your instance.
 
-Open your Ubuntu-24.04 LTS app or connect with VSCode. 
+2) Open your Ubuntu-24.04 LTS terminal (or connect through VSCode).
 
-Execute the following commands:
+3) Update and install necessary packages:
+
 
 ```
 sudo apt update && sudo apt upgrade
 ```
 
+4) Install the required tools:
+
 ```
 sudo apt install nodejs npm php php-xml php-mysql mysql-server composer
 ```
+>__Tip: You can install additional PHP extensions as needed, e.g., php-pdo, php-pgsql, etc., for other database technologies.__
 
-# Composer and Laravel settings
+# Setting up Composer and Laravel
+
+1) Install the Laravel installer globally via Composer:
 
 ```
 composer global require laravel/installer
 ```
 
-In my instance Laravel Installer didn't work by default, let's change that by adding it to the bashrc configuration.
+2) If the Laravel command doesn’t work globally, add Composer’s vendor/bin to your PATH:
+
 ```
 nano ~/.bashrc
 ```
 
-Save the following line to the end of the file
+3) Append the following line at the end of the file:
+
 ```
 export PATH=~/.config/composer/vendor/bin:$PATH
 ```
 
-Update the bashrc config
+4) Reload your bash configuration:
 
 ```
 source ~/.bashrc
 ```
 
 
-# Create your dev directory and App DB
+# Creating your Development Directory and Database
+
+1) Create a directory for your projects:
 
 ```
 mkdir dev-projects
-```
-
-```
 cd dev-projects
 ```
+>__Tip: Open this directory in VSCode using WSL for a seamless development experience.__
 
-I fully recommend opening a VSCode environment using WSL at __~/dev-projects/__ to continue the following steps in this tutorial.
+2) Create a Laravel project:
 
 ```
 laravel new example-app
+cd example-app
 ```
 
-Feel free to choose between the kits:
+## Laravel Installer
+1) Feel free to choose between the kits:
 - __No starter kit__
 - Laravel Breeze
 - Laravel Jetstream
 
-Testing framework:
+2) Testing framework:
 - Pest
 - __PHPUnit__
 
-Whether initializing a git repository or not.
+3) Whether initializing a git repository or not.
 - Yes
 - __No__
 
-Which database will your application use?
-- __MySQL__                                                    
+4) Which database will your application use?
+- __MySQL__    
 - MariaDB                                                  
 - SQLite (Missing PDO extension)                           
 - PostgreSQL (Missing PDO extension)                       
 - SQL Server (Missing PDO extension)
 
-__Install the necessary PDO extensions if you wish to use other technologies__
+>__Tip: Install the necessary PDO extensions if you wish to use other technologies__
 
 Whether or not to run the default database migrations:
 - Yes
@@ -124,13 +138,13 @@ php artisan serve
 
 You'll see there's a few warnings when hosting our app. Let's fix them by creating a new database for the new laravel app using MySQL.
 
-## Changing your root password (Optional)
+## Changing the MySQL Root Password (Optional)
 
-Check the default root password
+1) Check the default root password
 ```
 sudo grep 'temporary password' /var/log/mysqld.log
 ```
-If it doesn't exist then the password is empty. Just press enter when the password prompt appears in your console inside VSCode and you will log in.
+2) If none exist then the password is empty. Press enter when prompted to log in.
 
 ```
 mysql -u root -p
@@ -140,13 +154,13 @@ mysql -u root -p
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'new_password';
 ```
 
-## Creating the DB
+## Creating the Database
 
 Once logged in MySQL a prompt like this should appear
 
 __mysql\>__ 
 
-Execute this commands _(Change the database, user and password as you like)_
+1) Execute these commands _(Change the database, user and password as you like)_
 
 ```
 CREATE DATABASE lara_test_db;
@@ -168,30 +182,26 @@ FLUSH PRIVILEGES;
 Exit;
 ```
 
-Update the .env file:
+2) Update the .env file:
 - DB_DATABASE=lara_test_db
 - DB_USERNAME=laravel
 - DB_PASSWORD=laravel
 
-Make sure you are at example-app
+## Updating Laravel App Configuration
 
-```
-cd ~/dev-projects/example-app
-```
-
-## Updating Laravel App Config
-
-Let's clear the previous configuration and migrate the necessary data
+1) Clear any cached configuration to apply the new database settings:
 
 ```
 php artisan config:clear
 ```
 
+2) Run migrations to set up your database:
+
 ```
 php artisan migrate
 ```
 
-## Check the DB migrations
+## Check Migrations
 
 ```
 sudo mysql -u root -p
@@ -205,15 +215,19 @@ USE lara_test_db;
 SHOW TABLES;
 ```
 
-# Begin development
+# Starting the Development Server
 
 ```
 php artisan serve
 ```
 
+You should now see your Laravel application running on `http://127.0.0.1:8000/`
+
+
+
 # Troubleshooting
 
-If Ubuntu is not installing properly, run these commands at Windows Terminal:
+1) If Ubuntu is not installing properly, run these commands at Windows Terminal:
 
 ```
 DISM /Online /Cleanup-Image /ScanHealth 
@@ -230,3 +244,5 @@ Source:G:\Sources\install.wim
 ```
 SFC /Scannow
 ```
+
+2) Ensure your WSL instance is healthy and not corrupted. Use Windows recovery files if needed.
