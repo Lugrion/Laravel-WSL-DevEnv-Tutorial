@@ -246,3 +246,12 @@ SFC /Scannow
 ```
 
 2) Ensure your WSL instance is healthy and not corrupted. Use Windows recovery files if needed.
+
+## Deleting your Ubuntu instance
+
+1) Uninstall manually
+
+2) Execute the following command in the Windows Terminal
+```
+wsl --unregister Ubuntu-24.04
+```
