@@ -147,7 +147,7 @@ sudo grep 'temporary password' /var/log/mysqld.log
 2) If none exist then the password is empty. Press enter when prompted to log in.
 
 ```
-mysql -u root -p
+sudo mysql -u root -p
 ```
 
 ```
